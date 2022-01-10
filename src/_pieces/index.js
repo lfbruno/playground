@@ -12,6 +12,7 @@ export default function Main() {
             </header>
 
             <main className="main--root">
+                <p className="text-normal">Hello there</p>
             {JSON.stringify(utterance)}
             </main>
 
