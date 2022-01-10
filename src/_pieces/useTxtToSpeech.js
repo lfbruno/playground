@@ -30,10 +30,9 @@ export default function useTxtToSpeech(autoplayTxt) {
         // onvoiceschanged to make sure the target selected voice is the one which is running...
         window.speechSynthesis.onvoiceschanged = () => {
             if (!window.SpeechSynthesisUtterance) return null;
+            alert(window.SpeechSynthesisUtterance);
             utterance = new SpeechSynthesisUtterance();
             const allVoiceList = window.speechSynthesis.getVoices();
-            console.log("allVoiceList", allVoiceList);
-
             // all br voices: eSpeak-PT eSpeak-PT+F2 Google português do Brasil (female)
             const brVoice = allVoiceList.find(
                 (v) => v.name === "Google português do Brasil"
