@@ -11,8 +11,6 @@ function cancel() {
 
 export default function useTxtToSpeech(autoplayTxt) {
     const [utter, setUtter] = useState(null);
-    console.log("utter", utter);
-    console.log("autoplayTxt", autoplayTxt);
 
     function speak(txt) {
         console.log("txt", txt);
@@ -30,7 +28,8 @@ export default function useTxtToSpeech(autoplayTxt) {
         // onvoiceschanged to make sure the target selected voice is the one which is running...
         window.speechSynthesis.onvoiceschanged = () => {
             if (!window.SpeechSynthesisUtterance) return null;
-            alert(window.SpeechSynthesisUtterance);
+            alert("working")
+
             utterance = new SpeechSynthesisUtterance();
             const allVoiceList = window.speechSynthesis.getVoices();
             // all br voices: eSpeak-PT eSpeak-PT+F2 Google português do Brasil (female)
