@@ -4,7 +4,7 @@ import "./_index.css";
 import useTxtToSpeech from "./useTxtToSpeech";
 
 export default function Main() {
-    const { utterance, speak } = useTxtToSpeech("Oi");
+    const { speak } = useTxtToSpeech("Bom dia, Luis");
 
     return (
         <section>
@@ -13,10 +13,9 @@ export default function Main() {
 
             <main className="main--root">
                 <p className="text-normal">Ola mundo</p>
-            {JSON.stringify(utterance)}
-            <button onClick={() => speak("Olá mundo")}>
-                speak
-            </button>
+                <button onClick={() => speak("Olá mundo")}>
+                    speak
+                </button>
             </main>
 
             <footer className="footer theme-p">

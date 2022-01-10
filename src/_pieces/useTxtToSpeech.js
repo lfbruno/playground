@@ -1,53 +1,57 @@
 // reference: https://wicg.github.io/speech-api/#tts-section
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 let utterance;
-
-function cancel() {
-    // LESSON: if paused, then even if page is reloaded, the next execution seems not working... Using cancel to clear up all synthetis in the queue.
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-}
+let brVoice;
 
 export default function useTxtToSpeech(autoplayTxt) {
-    const [utter, setUtter] = useState(null);
+    const speechSynthesis = window.speechSynthesis;
+
+    function getVoiceList() {
+        const allVoiceList = speechSynthesis.getVoices();
+
+        // all br voices: eSpeak-PT eSpeak-PT+F2 Google português do Brasil (female)
+        brVoice = allVoiceList.find((v) => {
+            const brVoices = ["Google português do Brasil", "Portuguese", "portuguese", "brazil"];
+            return brVoices.some(type => v.name.includes(type));
+        });
+    }
+
+    getVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = getVoiceList;
+    }
 
     function speak(txt) {
-        console.log("txt", txt);
-        if (!window.speechSynthesis || !utter) return;
-
+        if (!speechSynthesis || !utterance) return;
         // cancel if any audio is currently being played before running current one;
         cancel();
 
-        utter.text = txt;
-        console.log("utter", utter);
-        window.speechSynthesis.speak(utter);
+        utterance.text = txt;
+        speechSynthesis.speak(utterance);
+    }
+
+    function cancel() {
+        // LESSON: if paused, then even if page is reloaded, the next execution seems not working... Using cancel to clear up all synthetis in the queue.
+        if (!speechSynthesis) return;
+        window.speechSynthesis.cancel();
     }
 
     useEffect(() => {
-        // onvoiceschanged to make sure the target selected voice is the one which is running...
-        window.speechSynthesis.onvoiceschanged = () => {
-            if (!window.SpeechSynthesisUtterance) return null;
-            alert("working")
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            utterance = new SpeechSynthesisUtterance("Olá, bom dia!");
 
-            utterance = new SpeechSynthesisUtterance();
-            const allVoiceList = window.speechSynthesis.getVoices();
-            // all br voices: eSpeak-PT eSpeak-PT+F2 Google português do Brasil (female)
-            const brVoice = allVoiceList.find(
-                (v) => v.name === "Google português do Brasil"
-            );
             utterance.rate = 1; // This attribute specifies the speaking rate for the utterance. It is relative to the default rate for this voice. 1 is the default rate supported by the speech synthesis engine or specific voice (which should correspond to a normal speaking rate). 2 is twice as fast, and 0.5 is half as fast. Values below 0.1 or above 10 are strictly disallowed, but speech synthesis engines or specific voices may constrain the minimum and maximum rates further, for example, a particular voice may not actually speak faster than 3 times normal even if you specify a value larger than 3. If SSML is used, this value will be overridden by prosody tags in the markup.
             utterance.volume = 1; // This attribute specifies the speaking volume for the utterance. It ranges between 0 and 1 inclusive, with 0 being the lowest volume and 1 the highest volume, with a default of 1. If SSML is used, this value will be overridden by prosody tags in the markup.
             utterance.pitch = 1; // This attribute specifies the speaking pitch for the utterance. It ranges between 0 and 2 inclusive, with 0 being the lowest pitch and 2 the highest pitch. 1 corresponds to the default pitch of the speech synthesis engine or specific voice. Speech synthesis engines or voices may constrain the minimum and maximum rates further. If SSML is used, this value will be overridden by prosody tags in the markup.
-            utterance.localService = true;
             utterance.voice = brVoice;
-            console.log("utterance", utterance);
-            setUtter(utterance);
-            return null;
-        };
+            utterance.localService = true;
 
-        if (autoplayTxt && utter) speak(autoplayTxt);
-    }, [autoplayTxt, utter]);
+        }
 
-    return { speak, cancel, utterance };
+        if (autoplayTxt) speak(autoplayTxt);
+        // eslint-disable-next-line
+    }, [autoplayTxt, speechSynthesis, brVoice]);
+
+    return { speak, cancel };
 }
