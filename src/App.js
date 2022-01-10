@@ -15,7 +15,6 @@ function App() {
             <h1 className="text-topic font-weight-bold text-p">
                 Playground
             </h1>
-            <p className="ml-5 text-left text-title text-s">Quick testing front-end functionalities</p>
         </header>
         <Main />
         <br />
