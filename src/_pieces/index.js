@@ -1,10 +1,13 @@
 // eslint-disable-next-line
 import React, { Fragment } from 'react';
+import LineChart from "../gallery/line-chart/LineChart.js";
 import "./_index.css";
-import useTxtToSpeech from "./useTxtToSpeech";
+
 
 export default function Main() {
-    const { speak } = useTxtToSpeech("Bom dia, Luis");
+    const title = "Pontos adicionados por mês"
+    const xLabels = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"]
+    const dataArray = [123, 456, 789, 101112];
 
     return (
         <section>
@@ -12,10 +15,18 @@ export default function Main() {
             </header>
 
             <main className="main--root">
-                <p className="text-normal">Ola mundo</p>
-                <button onClick={() => speak("Olá mundo")}>
-                    speak
-                </button>
+                <LineChart
+                    xLabels={xLabels}
+                    dataArray={dataArray}
+                    title={title}
+                    onlySmall
+                    highestValue={100}
+                    lowestValue={-100}
+                    axisYTitle="pontos"
+                    textAfterData="pts"
+                    isFirstPos={false}
+                    isLastPos={false}
+                />
             </main>
 
             <footer className="footer theme-p">
